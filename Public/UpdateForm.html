@@ -3,24 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>add game</title>
+    <title>Update Game</title>
 </head>
 <body>
-    <h1>add game to list</h1>
+    <h1>update Game info</h1>
     <a href="Index.html">back to list</a>
-    <form action="/addGame" method="POST">
-        <p>New game to add</p>
+    <form action="/updateGame/:id" method="POST">
+        <p>game to update</p>
         <label for="gameRank">game rank</label>
         <input type = text name ="gameRank" id="gameRank">
         <br>
-        <label for="gameName">game name</label>
-        <input type = text name ="gameName" id="gameName">
+        <label for="gameName" >game name</label>
+        <input type = text name ="gameName" id="gameName" >
         <br>
 
-        <button type="submit">add game</button>
+        <button type="submit" onsubmit="">Update</button>
 
     </form>
 </body>
 </html>
-
-
