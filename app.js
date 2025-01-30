@@ -64,7 +64,7 @@ app.post("/addGame",async (req,res)=>{
 
 });
 
-app.put("/updateGame/:id", (req,res)=>{
+app.put("/updateGame/gameRank", (req,res)=>{
     Game.findByIdAndUpdate(req.params.id,req.body,{
         new:true,
         runValidators:true
