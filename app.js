@@ -65,7 +65,7 @@ app.post("/addGame",async (req,res)=>{
 });
 
 app.put("/updateGame/:id", (req,res)=>{
-    personalbar.findByIdAndUpdate(req.params.id,req.body,{
+    Game.findByIdAndUpdate(req.params.id,req.body,{
         new:true,
         runValidators:true
     }).then((updatedGame)=>{
@@ -77,14 +77,14 @@ app.put("/updateGame/:id", (req,res)=>{
     }).catch((err)=>{
         res.status(400).json({error:"Failed to update the game"})
     })
-})
+});
 
-app.delete("/deleteGame/gameName",async(req,res)=>{
+app.delete("/deleteGame/:gameName",async(req,res)=>{
     try{
         const gameName = req.query;
-        const game = await personalbar.find(gameName);
+        const game = await Game.find(gameName);
 
-        if(gameName.length === 0){
+        if(game.length === 0){
             return res.status(404).json({error:"Failed to find game."});
         }
 
@@ -95,7 +95,7 @@ app.delete("/deleteGame/gameName",async(req,res)=>{
         console.log(err);
         res.status(404).json({error:"Game not found"});
     }
-})
+});
 
 app.listen(port,function(){
     console.log(`Server os running on port ${port}`);
