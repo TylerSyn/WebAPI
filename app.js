@@ -64,7 +64,7 @@ app.post("/addGame",async (req,res)=>{
 
 });
 
-app.put("/updateGame/gameRank", (req,res)=>{
+app.put("/updateGame/:id", (req,res)=>{
     const gamename = req.query;
     Game.findOneAndUpdate(gamename,req.body,{
         new:true,
@@ -80,20 +80,22 @@ app.put("/updateGame/gameRank", (req,res)=>{
     })
 });
 
-app.delete("/deleteGame/gameName",async(req,res)=>{
+app.delete("/deleteGame/:gameName",async(req,res)=>{
     try{
-        const gameName = req.query;
-        const game = await Game.find(gameName);
+        const gamename = req.params.gameName;
+        console.log(gamename);
+        //const game = await Game.find(gamename);
 
-        if(game.length === 0){
+        if(gamename.length === 0){
             return res.status(404).json({error:"Failed to find game."});
-        }
+        };
 
-        const deletedGame = await Game.findOneAndDelete(gameName);
-        res.json({message:"game deleted"});
-        //res.redirect("/");
-    }catch(err){
-        console.log(err);
+        const deletedGame = await Game.findOneAndDelete({gameName:gamename});
+
+        //res.json({message:"game deleted"});
+        res.redirect("/");
+    }catch(error){
+        console.log(error);
         res.status(404).json({error:"Game not found"});
     }
 });
