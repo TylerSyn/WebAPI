@@ -17,7 +17,7 @@ const fetchGames = async()=>{
         games.forEach((game) => {
             const gameDiv = document.createElement("div");
             gameDiv.className = "game";
-            gameDiv.innerHTML = `${game.gameRank}. ${game.gameName}  <button id='game.id' type='button' onclick='window.location="/UpdateForm.html"'>Update</button> <button type='button' id = 'deleteBtn'>Delete</button>`;
+            gameDiv.innerHTML = `${game.gameRank}. ${game.gameName}  <button id='${game.gameName}Upd' type='button' onclick='window.location="/UpdateForm.html"'>Update</button> <button type='button' id = '${game.gameName}Dlt'>Delete</button>`;
             gameContainer.appendChild(gameDiv);
         });
 

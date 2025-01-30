@@ -1,14 +1,13 @@
-
-
 const DeleteGame = async(gamename) => {
+    document.getElementById(`${gamename}Dlt`);
     try {
-        const response = (`/deleteGame/${gamename}`);
-        if (!response.ok) {
-            throw new Error("failed to get game");
-        }
+        const response = await fetch(`/deleteGame/${gamename}`);
+         if (!response.ok) {
+             throw new Error("failed to get game");
+         }
 
         const game = await response.json();
-        console.log(game);
+        console.log(gamename);
 
 
     } catch (error) {
@@ -17,6 +16,6 @@ const DeleteGame = async(gamename) => {
     }
 
 }
-const deleteBtn = document.getElementById("deleteBtn").onclick = DeleteGame(deleteBtn.gamename)
+
 
 

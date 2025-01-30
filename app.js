@@ -65,7 +65,8 @@ app.post("/addGame",async (req,res)=>{
 });
 
 app.put("/updateGame/gameRank", (req,res)=>{
-    Game.findByIdAndUpdate(req.params.id,req.body,{
+    const gamename = req.query;
+    Game.findOneAndUpdate(gamename,req.body,{
         new:true,
         runValidators:true
     }).then((updatedGame)=>{
@@ -79,7 +80,7 @@ app.put("/updateGame/gameRank", (req,res)=>{
     })
 });
 
-app.delete("/deleteGame/:gameName",async(req,res)=>{
+app.delete("/deleteGame/gameName",async(req,res)=>{
     try{
         const gameName = req.query;
         const game = await Game.find(gameName);
