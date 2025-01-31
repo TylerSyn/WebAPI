@@ -8,7 +8,8 @@
 <body>
     <h1>update Game info</h1>
     <a href="Index.html">back to list</a>
-    <form action="/updateGame/gameRank" >
+    <form action="/updateGame/gameRank" method="post">
+        <input type="hidden" name="_method" value="PUT"/>
         <p>game to update</p>
         <label for="gameRank">game rank</label>
         <input type = text name ="gameRank" id="gameRank">
@@ -17,7 +18,7 @@
         <input type = text name ="gameName" id="gameName" >
         <br>
 
-        <button type="submit">Update</button>
+        <button  type="submit" onsubmit="UpdateGame(gameRank)" >Update</button>
 
     </form>
 </body>

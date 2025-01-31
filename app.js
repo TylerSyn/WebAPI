@@ -64,18 +64,20 @@ app.post("/addGame",async (req,res)=>{
 
 });
 
-app.put("/updateGame/:id", (req,res)=>{
-    const gamename = req.query;
-    Game.findOneAndUpdate(gamename,req.body,{
+app.put("/updateGame/:gameRank", (req,res)=>{
+    const gameRank = req.params.gameRank;
+    Game.findOneAndUpdate(gameRank,req.body,{
         new:true,
         runValidators:true
     }).then((updatedGame)=>{
+        console.log(gameRank);
         if(!updatedGame){
             return res.status().json({error:"failed to find game"})
         }
         res.json(updatedGame);
         //res.redirect("/");
     }).catch((err)=>{
+        console.log(gameRank);
         res.status(400).json({error:"Failed to update the game"})
     })
 });
@@ -93,7 +95,7 @@ app.delete("/deleteGame/:gameName",async(req,res)=>{
         const deletedGame = await Game.findOneAndDelete({gameName:gamename});
 
         //res.json({message:"game deleted"});
-        res.redirect("/");
+
     }catch(error){
         console.log(error);
         res.status(404).json({error:"Game not found"});
