@@ -2,6 +2,11 @@ const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const session = require("express-session");
+const bcrypt = require("bcryptjs");
+const Game = require("./models/Game");
+const User = require("./models/Users");
+const {register} = require("module");
 
 
 const app = express();
@@ -12,6 +17,18 @@ app.use(express.static(path.join(__dirname,"public")));
 //middleware for parsing json requests
 app.use(bodyParser.json());
 app.use(express.urlencoded({extended:true}));
+
+app.use(session({
+    secret:"12345",
+    resave:false,
+    saveUninitialized:false,
+    cookie:{secure:false}
+}))
+
+function isAuthenticated(req,res,next){
+    if(req.session.user)return next();
+    return res.redirect("/login");
+}
 
 let message = "Tyler was here";
 
@@ -25,31 +42,57 @@ db.once("open",()=>{
     console.log("connected to monogDB database");
 })
 
-const gameSchema = new mongoose.Schema({
-    gameRank:Number,
-    gameName:String
-});
 
-const Game = mongoose.model("Game",gameSchema,"GamesList");
 
 function sendMessage(){
     console.log(msg);
 };
 
+app.get("/register",(req,res)=>{
+    res.sendFile(path.join(__dirname,"public","register.html"));
+})
+app.post("/register",async (req,res)=>{
+    try{
+
+        const{username,password,email}=req.body;
+
+        const existingUser = await User.findOne({username});
+
+        if(existingUser){
+            return res.send("Username already taken. try a different one");
+        }
+
+        const hashedPassword = bcrypt.hashSync(password,10);
+
+        const newUser = new User({username,password:hashedPassword,email});
+        await newUser.save();
+
+        res.redirect("/login");
+
+
+    }catch(err){
+        res.status(500).send("Error registering new user");
+    }
+})
 
 app.get("/", function(req,res){
     res.sendFile(path.join(__dirname,"Public/Index.html"));
 });
 
-app.get("/games",async (req,res)=>{
+app.get("/games",isAuthenticated,async (req,res)=>{
     try{
         const game = await Game.find();
-        res.json(game);
+        //res.json(game);
         console.log(game);
+        res.redirect("Games.html")
     }catch(error){
         res.status(500).json({error:"failed to get game"});
     }
-})
+});
+
+app.get("/login",(req,res)=>{
+res.sendFile(path.join(__dirname,"public","Login.html"))
+});
 
 app.post("/addGame",async (req,res)=>{
     try{
@@ -64,7 +107,31 @@ app.post("/addGame",async (req,res)=>{
 
 });
 
-app.put("/updateGame/:gameRank", (req,res)=>{
+app.post("/login",async (req,res)=>{
+    const{username,password} = req.body;
+    console.log(req.body);
+
+    const user = await User.findOne({username});
+
+
+
+    if(user && bcrypt.compareSync(password,user.password)){
+        req.session.user = username;
+        console.log("logged in");
+        return res.redirect("/games.html");
+    }
+    req.session.error="Invalid User";
+    console.log("login failed");
+    return res.redirect("/login");
+});
+
+app.get("/logout",(req,res)=>{
+    req.session.destroy(()=>{
+        res.redirect("/login");
+    })
+})
+
+app.put("/updateGame/:gameRank",isAuthenticated ,(req,res)=>{
     const gameRank = req.params.gameRank;
     Game.findOneAndUpdate(gameRank,req.body,{
         new:true,
